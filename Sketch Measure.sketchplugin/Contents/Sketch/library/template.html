@@ -1227,6 +1227,7 @@ var I18N = {},
                             if(!$('.screen-viewer').hasClass('moving-screen')){
                                 if( $(event.target).hasClass('layer') || $(event.target).hasClass('slice-layer')){
                                     var selected = (!$(event.target).hasClass('slice-layer'))? event.target: $('.layer-' + $(event.target).attr('data-objectid')).first();
+                                    if (event.ctrlKey) {$(selected).hide();return}//hide layer
                                     self.selectedIndex = self.getIndex(selected);
                                     self.hideDistance();
                                     self.mouseoutLayer();
