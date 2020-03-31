@@ -3158,7 +3158,8 @@ SM.extend({
                     objectID: this.toJSString( layer.objectID() ),
                     type: layerType,
                     name: this.toHTMLEncode(this.emojiToEntities(layer.name())),
-                    rect: this.rectToJSON(exportLayerRect, artboardRect)
+                    rect: this.rectToJSON(exportLayerRect, artboardRect),
+					resizingConstraint:layer.resizingConstraint()
                 };
 
         if(symbolLayer) layerData.objectID = this.toJSString( symbolLayer.objectID() );
