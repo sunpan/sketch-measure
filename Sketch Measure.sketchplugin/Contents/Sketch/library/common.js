@@ -3159,12 +3159,14 @@ SM.extend({
                     type: layerType,
                     name: this.toHTMLEncode(this.emojiToEntities(layer.name())),
                     rect: this.rectToJSON(exportLayerRect, artboardRect),
-					resizingConstraint:layer.resizingConstraint()
+					resizingConstraint:layer.resizingConstraint(),
+                    frame: this.rectToJSON(layer.frame()),
+                    parent_frame: this.rectToJSON(layer.parentGroup().frame())
                 };
 
         if(symbolLayer) layerData.objectID = this.toJSString( symbolLayer.objectID() );
 
-
+console.log(layerData);
         if ( layerType != "slice" ) {
             var layerStyle = layer.style();
             layerData.rotation = layer.rotation();

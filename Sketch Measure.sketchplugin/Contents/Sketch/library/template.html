@@ -877,6 +877,36 @@ var I18N = {},
                             '<label data-label="' +_('Height') + '"><input id="size-height" type="text" value="' + this.unitSize(layerData.rect.height) + '" readonly="readonly"></label>',
                         '</div>'
                     ].join(''),
+				frame_pos = [
+                        '<div class="item" data-label="' +_('frame_pos') + ':">',
+                            '<label data-label="' +_('X') + '"><input id="position-x" type="text" value="' + this.unitSize(layerData.frame.x) + '" readonly="readonly"></label>',
+                            '<label data-label="' +_('Y') + '"><input id="position-y" type="text" value="' + this.unitSize(layerData.frame.y) + '" readonly="readonly"></label>',
+                        '</div>'
+                    ].join(''),
+                frame_sz = [
+                        '<div class="item" data-label="' +_('frame_sz') + ':">',
+                            '<label data-label="' +_('Width') + '"><input id="size-width" type="text" value="' + this.unitSize(layerData.frame.width) + '" readonly="readonly"></label>',
+                            '<label data-label="' +_('Height') + '"><input id="size-height" type="text" value="' + this.unitSize(layerData.frame.height) + '" readonly="readonly"></label>',
+                        '</div>'
+                    ].join(''),
+                parent_sz = [
+                        '<div class="item" data-label="' +_('parent_sz') + ':">',
+                            '<label data-label="' +_('Width') + '"><input id="size-width" type="text" value="' + this.unitSize(layerData.parent_frame.width) + '" readonly="readonly"></label>',
+                            '<label data-label="' +_('Height') + '"><input id="size-height" type="text" value="' + this.unitSize(layerData.parent_frame.height) + '" readonly="readonly"></label>',
+                        '</div>'
+                    ].join(''),
+                layout = [
+                        '<div class="item" data-label="' +_('Layout') + ':">',
+							//(layerData.resizingConstraint^0x3F )&0x1?'R':'',
+							//(layerData.resizingConstraint^0x3F )&0x4?'L':'',
+							//(layerData.resizingConstraint^0x3F )&0x2?'H':'',
+							//(layerData.resizingConstraint^0x3F )&0x8?'B':'',
+							//(layerData.resizingConstraint^0x3F )&0x20?'T':'',
+							//(layerData.resizingConstraint^0x3F )&0x10?'V':'',
+                            '<label data-label="' +_('Value') + '"><input id="size-width" type="text" value="' + (layerData.resizingConstraint ).toString(2) + '" readonly="readonly"></label>',
+                            '<label data-label="' +_('Value^0x3F') + '"><input id="size-width" type="text" value="' + (layerData.resizingConstraint^0x3F ).toString(2) + '" readonly="readonly"></label>',
+                        '</div>'
+                    ].join(''),
                 opacity = (typeof layerData.opacity == 'number')? [
                         '<div class="item" data-label="' +_('Opacity') + ':">',
                             '<label><input id="opacity" type="text" value="' + Math.round( layerData.opacity * 10000 ) / 100  + '%" readonly="readonly"></label>',
@@ -894,7 +924,7 @@ var I18N = {},
                             '<label><input id="styleName" type="text" value="' + layerData.styleName + '" readonly="readonly"></label>',
                         '</div>'
                     ].join(''): '';
-            html.push(this.propertyType('PROPERTIES', [ position, size, opacity, radius, styleName ].join('')));
+            html.push(this.propertyType('PROPERTIES', [ position, size, frame_pos, frame_sz, parent_sz,layout, opacity, radius, styleName ].join('')));
             // FILLS
             if(layerData.fills && layerData.fills.length > 0){
                 var fills = [],
