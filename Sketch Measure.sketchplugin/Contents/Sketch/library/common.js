@@ -638,7 +638,7 @@ SM.extend({
         }
         else{
             configsData = this.extend(newConfigs, this.getConfigs() || {});
-            this.UIMetadata.setObject_forKey (JSON.stringify(configsData), this.prefix);
+            this.UIMetadata.setObject_forKey(JSON.stringify(configsData), this.prefix);
         }
         var saveDoc = this.addShape();
         this.page.addLayers([saveDoc]);
@@ -650,7 +650,7 @@ SM.extend({
             this.command.setValue_forKey_onLayer(null, prefix, container);
         }
         else{
-            configsData = this.UIMetadata.setObject_forKey (null, this.prefix);
+            configsData = this.UIMetadata.setObject_forKey(null, this.prefix);
         }
 
     }
@@ -2390,6 +2390,9 @@ SM.extend({
                this.is(layer, MSBitmapLayer) ||
                this.is(layer, MSSliceLayer) ||
                this.is(layer, MSSymbolInstance) ||
+			   //histudio begin
+               this.is(layer, MSLayerGroup) ||
+			   //histudio end
                this.isSliceGroup(layer)
     },
     getStates: function(layer){
@@ -2615,10 +2618,30 @@ SM.extend({
             layerData.objectID = symbolObjectID;
 
             if( !self.hasExportSizes(layer.symbolMaster()) && layer.symbolMaster().children().count() > 1 ){
+				
+				//histudio begin
+				//	var symbolMaster=layer.symbolMaster();
+					
+				
+				//	var bgrect=MSShapeGroup.shapeWithRect(NSMakeRect(0, 0, 100, 100));
+					
+				//	symbolMaster.addLayers([bgrect]);
+				//	bgrect.setResizingConstraint(0x12);
+					
+				
+				//histudio end
+				
+				//histudio begin
+					return ;
+				//histudio end
+				
                 var symbolRect = this.getRect(layer),
                     symbolChildren = layer.symbolMaster().children(),
                     tempSymbol = layer.duplicate(),
                     tempGroup = tempSymbol.detachStylesAndReplaceWithGroupRecursively(false);
+					//histudio begin
+					//tempGroup.setName("t_e_m_p_group")
+					//histuido end
 
                 var tempSymbolLayers = tempGroup.children().objectEnumerator(),
                     overrides = layer.overrides(),
@@ -2643,6 +2666,7 @@ SM.extend({
                           }
                         }
                     }
+					
                     if(tempSymbolLayer){
                       self.getLayer(
                           artboard,
@@ -3130,6 +3154,7 @@ SM.extend({
 
         var layerType = this.is(layer, MSTextLayer) ? "text" :
                this.is(layer, MSSymbolInstance) ? "symbol" :
+               this.is(layer, MSLayerGroup) ? "group" :
                this.is(layer, MSSliceLayer) || this.hasExportSizes(layer)? "slice":
                "shape";
 
@@ -3153,20 +3178,41 @@ SM.extend({
             // export the default rect.
             exportLayerRect = layer.absoluteRect();
         }
+		
+		
 
         var layerData = {
                     objectID: this.toJSString( layer.objectID() ),
                     type: layerType,
                     name: this.toHTMLEncode(this.emojiToEntities(layer.name())),
-                    rect: this.rectToJSON(exportLayerRect, artboardRect),
-					resizingConstraint:layer.resizingConstraint(),
-                    frame: this.rectToJSON(layer.frame()),
-                    parent_frame: this.rectToJSON(layer.parentGroup().frame())
+                    rect: this.rectToJSON(exportLayerRect, artboardRect)
                 };
+				
+		//histudio begin		
+		
+          //  layerData["r_rect"]       = this.rectToJSON(layer.absoluteRect(),layer.parentGroup().frame());
+            //layerData["r_rect2"]       = this.rectToJSON(layer.frame());
+			layerData["classname"]=layer.className().toString()+"";
+			layerData["parent_name"]=this.toJSString( layer.parentGroup().name().toString());
+			layerData["parent_classname"]=this.toJSString( layer.parentGroup().className().toString());
+			layerData["symbol_name"]="MSSymbolInstance"==layer.className().toString()?this.toJSString(layer.symbolMaster().name()):"";
+			layerData["symbol_page_name"]="MSSymbolInstance"==layer.className().toString()?this.toJSString(layer.symbolMaster().parentPage().name()):"";
+			layerData["resizingConstraint"]=layer.resizingConstraint();
+		   // frame: this.rectToJSON(layer.frame()),
+			layerData["parent_id"]=this.toJSString( group.objectID());
+			layerData["parent_rect"]=this.rectToJSON(layer.parentGroup().absoluteRect(), artboardRect);
+			layerData["artboard_rect"]=this.rectToJSON(artboardRect, artboardRect);
+		//	layerData["parent_rect2"]=this.rectToJSON(layer.parentGroup().absoluteRect());
+		//	layerData["first_level"]=this.rectToJSON(layer.parentGroup().frame());
+			//layerData["parent_name"]=layer.parentGroup().name()+"";
+			//layerData["pparent_name"]=layer.parentGroup().parentGroup().name()+"";
+
+		//histudio end
+					
 
         if(symbolLayer) layerData.objectID = this.toJSString( symbolLayer.objectID() );
 
-console.log(layerData);
+		//parentsconsole.log(layerData);
         if ( layerType != "slice" ) {
             var layerStyle = layer.style();
             layerData.rotation = layer.rotation();

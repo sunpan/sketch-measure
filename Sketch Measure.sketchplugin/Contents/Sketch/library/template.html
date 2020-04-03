@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Spec Export - Sketch Measure 2.4</title>
+    <title>Hi Spec Export - Sketch Measure 2.4</title>
     <style type="text/css">
     /*! normalize.css v4.1.1 | MIT License | github.com/necolas/normalize.css */html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,details,figcaption,figure,footer,header,main,menu,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block}audio:not([controls]){display:none;height:0}progress{vertical-align:baseline}template,[hidden]{display:none}a{background-color:transparent;-webkit-text-decoration-skip:objects}a:active,a:hover{outline-width:0}abbr[title]{border-bottom:0;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit}b,strong{font-weight:bolder}dfn{font-style:italic}h1{font-size:2em;margin:.67em 0}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}img{border-style:none}svg:not(:root){overflow:hidden}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}button,input,select,textarea{font:inherit;margin:0}optgroup{font-weight:bold}button,input{overflow:visible}button,select{text-transform:none}button,html [type="button"],[type="reset"],[type="submit"]{-webkit-appearance:button}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type="button"]:-moz-focusring,[type="reset"]:-moz-focusring,[type="submit"]:-moz-focusring{outline:1px dotted ButtonText}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}textarea{overflow:auto}[type="checkbox"],[type="radio"]{box-sizing:border-box;padding:0}[type="number"]::-webkit-inner-spin-button,[type="number"]::-webkit-outer-spin-button{height:auto}[type="search"]{-webkit-appearance:textfield;outline-offset:-2px}[type="search"]::-webkit-search-cancel-button,[type="search"]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-input-placeholder{color:inherit;opacity:.54}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}
 
@@ -877,36 +877,6 @@ var I18N = {},
                             '<label data-label="' +_('Height') + '"><input id="size-height" type="text" value="' + this.unitSize(layerData.rect.height) + '" readonly="readonly"></label>',
                         '</div>'
                     ].join(''),
-				frame_pos = [
-                        '<div class="item" data-label="' +_('frame_pos') + ':">',
-                            '<label data-label="' +_('X') + '"><input id="position-x" type="text" value="' + this.unitSize(layerData.frame.x) + '" readonly="readonly"></label>',
-                            '<label data-label="' +_('Y') + '"><input id="position-y" type="text" value="' + this.unitSize(layerData.frame.y) + '" readonly="readonly"></label>',
-                        '</div>'
-                    ].join(''),
-                frame_sz = [
-                        '<div class="item" data-label="' +_('frame_sz') + ':">',
-                            '<label data-label="' +_('Width') + '"><input id="size-width" type="text" value="' + this.unitSize(layerData.frame.width) + '" readonly="readonly"></label>',
-                            '<label data-label="' +_('Height') + '"><input id="size-height" type="text" value="' + this.unitSize(layerData.frame.height) + '" readonly="readonly"></label>',
-                        '</div>'
-                    ].join(''),
-                parent_sz = [
-                        '<div class="item" data-label="' +_('parent_sz') + ':">',
-                            '<label data-label="' +_('Width') + '"><input id="size-width" type="text" value="' + this.unitSize(layerData.parent_frame.width) + '" readonly="readonly"></label>',
-                            '<label data-label="' +_('Height') + '"><input id="size-height" type="text" value="' + this.unitSize(layerData.parent_frame.height) + '" readonly="readonly"></label>',
-                        '</div>'
-                    ].join(''),
-                layout = [
-                        '<div class="item" data-label="' +_('Layout') + ':">',
-							//(layerData.resizingConstraint^0x3F )&0x1?'R':'',
-							//(layerData.resizingConstraint^0x3F )&0x4?'L':'',
-							//(layerData.resizingConstraint^0x3F )&0x2?'H':'',
-							//(layerData.resizingConstraint^0x3F )&0x8?'B':'',
-							//(layerData.resizingConstraint^0x3F )&0x20?'T':'',
-							//(layerData.resizingConstraint^0x3F )&0x10?'V':'',
-                            '<label data-label="' +_('Value') + '"><input id="size-width" type="text" value="' + (layerData.resizingConstraint ).toString(2) + '" readonly="readonly"></label>',
-                            '<label data-label="' +_('Value^0x3F') + '"><input id="size-width" type="text" value="' + (layerData.resizingConstraint^0x3F ).toString(2) + '" readonly="readonly"></label>',
-                        '</div>'
-                    ].join(''),
                 opacity = (typeof layerData.opacity == 'number')? [
                         '<div class="item" data-label="' +_('Opacity') + ':">',
                             '<label><input id="opacity" type="text" value="' + Math.round( layerData.opacity * 10000 ) / 100  + '%" readonly="readonly"></label>',
@@ -924,7 +894,7 @@ var I18N = {},
                             '<label><input id="styleName" type="text" value="' + layerData.styleName + '" readonly="readonly"></label>',
                         '</div>'
                     ].join(''): '';
-            html.push(this.propertyType('PROPERTIES', [ position, size, frame_pos, frame_sz, parent_sz,layout, opacity, radius, styleName ].join('')));
+            html.push(this.propertyType('PROPERTIES', [ position, size, opacity, radius, styleName ].join('')));
             // FILLS
             if(layerData.fills && layerData.fills.length > 0){
                 var fills = [],
@@ -1127,7 +1097,282 @@ var I18N = {},
                 expHTML.push('</ul>')
                 html.push(this.propertyType('EXPORTABLE', expHTML.join('')));
             }
-            self.renderInspector(html);
+            
+			//histudio begin
+			html.push('<textarea id="css" rows ="8" readonly="readonly">');
+			//html.push('type:' + layerData.type + '\n');
+			html.push('classname:' + layerData.classname + '\n');
+			html.push('parent_name:' + layerData.parent_name + '\n');
+			html.push('parent_classname:' + layerData.parent_classname + '\n');
+			if( layerData.parent_classname =="MSArtboardGroup")
+			{
+				html.push('一级有效\n');
+			}
+			else if(layerData.parent_classname =="MSSymbolMaster")
+			{
+				html.push('一级有效\n');
+			}
+			else
+			{
+				html.push('在其他组件中\n');
+			}
+			
+			html.push('pos='+layerData.rect.x+","+layerData.rect.y +'&nbsp;');
+			html.push('size='+(layerData.rect.width) +","+(layerData.rect.height) +'\n');
+			html.push('parent_pos='+layerData.parent_rect.x+","+layerData.parent_rect.y +'&nbsp;');
+			html.push('size='+(layerData.parent_rect.width) +","+(layerData.parent_rect.height) +'\n');
+			//html.push('exportable='+exportable+'\n');
+		//	html.push('layout value='+ (layerData.resizingConstraint ).toString()  +'\n');
+			html.push('layout flag='+
+							((layerData.resizingConstraint^0x3F )&0x1?'R':'_')+
+							((layerData.resizingConstraint^0x3F )&0x4?'L':'_')+
+							((layerData.resizingConstraint^0x3F )&0x2?'H':'_')+
+							((layerData.resizingConstraint^0x3F )&0x8?'B':'_')+
+							((layerData.resizingConstraint^0x3F )&0x20?'T':'_')+
+							((layerData.resizingConstraint^0x3F )&0x10?'V':'_')+
+							'\n');
+			html.push('</textarea>');
+			
+			
+			if(layerData.symbol_name!="")
+			{
+				html.push('<div class="items-group"  style="background:#FFFFFF" >');
+				pagename=layerData.symbol_page_name;
+				symbolname=layerData.symbol_name;
+				pagename=pagename.replace(/ /g, '-').replace(/\//g, '-');
+				symbolname=symbolname.replace(/ /g, '-').replace(/\//g, '-');
+			
+				link="links/"+pagename+"-"+symbolname+".html";
+			
+				html.push('<a frame="_blank" href="'+link+'">打开'+layerData.symbol_name+'组件</a>');
+				html.push('</div>');
+			}
+			if(layerData.parent_id!="")
+			{
+				html.push('<div class="items-group"   >');
+				html.push('<button class="goparent" parent_id="'+layerData.parent_id+'">Go Parent</button>');
+				html.push('</div>');
+			}
+
+//Unity info begin
+      //两边拉伸    常见拉伸                文字栏
+      //两边固定	错误    
+      //一边拉伸	不支持 
+      //一边固定	贴边                    金币栏  
+      //没边拉伸	等百分比位置+拉伸       sketch 默认状态
+      //没边固定    等百分比位置+固定        
+	  
+
+		
+		//params
+		var LState=((layerData.resizingConstraint^0x3F )&0x4)!=0;
+		var RState=((layerData.resizingConstraint^0x3F )&0x1)!=0;
+		var TState=((layerData.resizingConstraint^0x3F )&0x20)!=0;
+		var BState=((layerData.resizingConstraint^0x3F )&0x8)!=0;
+		var HStretch=((layerData.resizingConstraint^0x3F )&0x2)==0;
+		var VStretch=((layerData.resizingConstraint^0x3F )&0x10)==0;
+		var rect={...layerData.rect};//clone 
+		
+		var parents=["parent","artboard"];
+
+		
+		var parentRect={...layerData["parent_rect"]};//clone 
+		
+		
+		//output
+		var layoutTypeH="";
+		var layoutTypeV="";
+		
+		var minAnchorsX=0;
+		var minAnchorsY=0;
+		var maxAnchorsX=0;
+		var maxAnchorsY=0;
+		
+		var posX=null;
+		var posY=null;
+		var width=null;
+		var height=null;
+		
+		var left=null;
+		var right=null;
+		var top=null;
+		var bottom=null;
+		
+		var pivotX=0.5;
+		var pivotY=0.5;
+		
+		//code
+		var relatedRect={...rect};//clone  //相对父的矩形
+		relatedRect.x-=parentRect.x;
+		relatedRect.y-=parentRect.y;
+		
+		
+		//横向
+		if(LState&RState&HStretch){//两边拉伸
+			layoutTypeH="两边拉伸";
+			minAnchorsX=0; 
+			maxAnchorsX=1;
+			left=relatedRect.x;
+			right=parentRect.width-relatedRect.x-relatedRect.width;
+		}
+		else if(LState&RState&!HStretch){//两边固定 错误
+			layoutTypeH="两边固定(错误)";
+			
+		}
+		else if(LState&!RState&HStretch){//一边拉伸
+			layoutTypeH="左边拉伸(不支持)";
+		
+		}
+		else if(LState&!RState&!HStretch){//一边固定
+			layoutTypeH="左边固定";
+			minAnchorsX=0; 
+			maxAnchorsX=0;
+			posX=relatedRect.x+relatedRect.width/2;
+			width=relatedRect.width;
+		}
+		else if(!LState&RState&HStretch){//一边拉伸
+			layoutTypeH="右边拉伸(不支持)";
+			width=relatedRect.width;
+		
+		}
+		else if(!LState&RState&!HStretch){//一边固定
+			layoutTypeH="右边固定";
+			minAnchorsX=1;
+			maxAnchorsX=1;
+			posX=relatedRect.x+relatedRect.width/2-parentRect.width;
+			width=relatedRect.width;
+		
+		}
+		else if(!LState&!RState&HStretch){//没边拉伸
+			layoutTypeH="没边拉伸";
+			minAnchorsX=relatedRect.x/parentRect.width;
+			maxAnchorsX=(relatedRect.x+relatedRect.width)/parentRect.width;
+			left=0;
+			right=0;
+		
+		}
+		else //if(!LState&!RState&!HStretch)//没边固定
+		{
+			layoutTypeH="没边固定";
+			minAnchorsX=(relatedRect.x+relatedRect.width/2)/parentRect.width;
+			maxAnchorsX=(relatedRect.x+relatedRect.width/2)/parentRect.width;
+			posX=0;
+			width=relatedRect.width;
+		
+		}
+		
+		
+		//纵向
+		if(TState&BState&VStretch){//两边拉伸
+			layoutTypeV="两边拉伸";
+			minAnchorsY=0; 
+			maxAnchorsY=1;
+			top=relatedRect.y;
+			bottom=parentRect.height-relatedRect.y-relatedRect.height;
+		}
+		else if(TState&BState&!VStretch){//两边固定 错误
+			layoutTypeV="两边固定(错误)";
+			
+		}
+		else if(TState&!BState&VStretch){//一边拉伸
+			layoutTypeV="上边拉伸(不支持)";
+		
+		}
+		else if(TState&!BState&!VStretch){//一边固定
+			layoutTypeV="上边固定";
+			minAnchorsY=1; 
+			maxAnchorsY=1;
+			posY=-(relatedRect.y+relatedRect.height/2);
+			height=relatedRect.height;
+		}
+		else if(!TState&BState&VStretch){//一边拉伸
+			layoutTypeV="下边拉伸(不支持)";
+		
+		}
+		else if(!TState&BState&!VStretch){//一边固定
+			layoutTypeV="下边固定";
+			minAnchorsY=0;
+			maxAnchorsY=0;
+			posY=parentRect.height-relatedRect.y-relatedRect.height/2;
+			height=relatedRect.height;
+		
+		}
+		else if(!TState&!BState&VStretch){//没边拉伸
+			layoutTypeV="没边拉伸";
+			minAnchorsY=1-(relatedRect.y+relatedRect.height)/parentRect.height;
+			maxAnchorsY=1-relatedRect.y/parentRect.height;
+			top=0;
+			bottom=0;
+		
+		}
+		else //if(!TState&!BState&!VStretch)//没边固定
+		{
+			layoutTypeV="没边固定";
+			minAnchorsY=1-(relatedRect.y+relatedRect.height/2)/parentRect.height;
+			maxAnchorsY=1-(relatedRect.y+relatedRect.height/2)/parentRect.height;
+			posY=0;
+			height=relatedRect.height;
+		
+		}
+		
+	  
+		var round=function(value){return Math.round(value*100)/100};//保留2位小数
+		
+		html.push('<textarea id="css" rows ="20" readonly="readonly">');
+		html.push('uinty layout\n');
+		html.push('横向 '+ layoutTypeH+'\n');
+		html.push('纵向 '+ layoutTypeV+'\n');
+	  
+		html.push('minAnchors=(' + round(minAnchorsX) + ',' + round(minAnchorsY) + ')\n');
+		html.push('maxAnchors=(' + round(maxAnchorsX) + ',' + round(maxAnchorsY) + ')\n');
+		html.push('pivot=(' + round(pivotX) + ',' + round(pivotY) + ')\n');
+		if(left!==null) html.push('Left=' + round(left) + ' ');
+		if(posX!==null) html.push('PosX=' + round(posX) + ' ');
+		if(top!==null) html.push('Top=' + round(top) + '\n');
+		if(posY!==null) html.push('PosY=' + round(posY) + '\n');
+	  
+		if(right!==null) html.push('Right=' + round(right) + ' ');
+		if(width!==null) html.push('Width=' + round(width) + ' ');
+		if(bottom!==null) html.push('Bottom=' + round(bottom) + '\n');
+		if(height!==null) html.push('Height=' + round(height) + '\n');
+	  
+	  
+		html.push('</textarea>');
+		
+	
+		
+		
+		//Unity info end
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+			//histudio end
+			
+			self.renderInspector(html);
+			
+			
+						
+			//histudio begin
+				
+		//	  $(document).on("click", ".goparent" , function() {
+			$(".goparent").click(function(event){
+						
+                        var selected =$(".layer-"+$(event.target).attr('parent_id'));
+						self.selectedIndex = self.getIndex(selected);
+						self.hideDistance();
+						self.mouseoutLayer();
+						self.selectedLayer();
+						self.inspector();
+
+						});			
+			
+			
         },
         getAndroidWithHeight: function (layerData) {
             return "android:layout_width=\"" + this.unitSize(layerData.rect.width, false) + "\"\r\n" + "android:layout_height=\"" + this.unitSize(layerData.rect.height, false) + "\"\r\n";
@@ -1257,7 +1502,9 @@ var I18N = {},
                             if(!$('.screen-viewer').hasClass('moving-screen')){
                                 if( $(event.target).hasClass('layer') || $(event.target).hasClass('slice-layer')){
                                     var selected = (!$(event.target).hasClass('slice-layer'))? event.target: $('.layer-' + $(event.target).attr('data-objectid')).first();
-                                    if (event.shiftKey) {$(selected).hide();return}//hide layer
+                                    //histudio begin
+									if (event.shiftKey) {$(selected).hide();return}//hide layer
+                                    //histudio end
                                     self.selectedIndex = self.getIndex(selected);
                                     self.hideDistance();
                                     self.mouseoutLayer();
