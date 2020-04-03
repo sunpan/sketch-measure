@@ -1249,6 +1249,9 @@ var I18N = {},
 			maxAnchorsX=(relatedRect.x+relatedRect.width)/parentRect.width;
 			left=0;
 			right=0;
+
+			
+			
 		
 		}
 		else //if(!LState&!RState&!HStretch)//没边固定
@@ -1304,6 +1307,7 @@ var I18N = {},
 			top=0;
 			bottom=0;
 		
+
 		}
 		else //if(!TState&!BState&!VStretch)//没边固定
 		{
@@ -1316,25 +1320,26 @@ var I18N = {},
 		}
 		
 	  
-		var round=function(value){return Math.round(value*100)/100};//保留2位小数
+		var round2=function(value){return Math.round(value*10000)/10000};//保留2位小数
+		var round4=function(value){return Math.round(value*10000)/10000};//保留2位小数
 		
 		html.push('<textarea id="css" rows ="20" readonly="readonly">');
 		html.push('uinty layout\n');
 		html.push('横向 '+ layoutTypeH+'\n');
 		html.push('纵向 '+ layoutTypeV+'\n');
 	  
-		html.push('minAnchors=(' + round(minAnchorsX) + ',' + round(minAnchorsY) + ')\n');
-		html.push('maxAnchors=(' + round(maxAnchorsX) + ',' + round(maxAnchorsY) + ')\n');
-		html.push('pivot=(' + round(pivotX) + ',' + round(pivotY) + ')\n');
-		if(left!==null) html.push('Left=' + round(left) + ' ');
-		if(posX!==null) html.push('PosX=' + round(posX) + ' ');
-		if(top!==null) html.push('Top=' + round(top) + '\n');
-		if(posY!==null) html.push('PosY=' + round(posY) + '\n');
+		html.push('minAnchors=(' + round4(minAnchorsX) + ',' + round4(minAnchorsY) + ')\n');
+		html.push('maxAnchors=(' + round4(maxAnchorsX) + ',' + round4(maxAnchorsY) + ')\n');
+		html.push('pivot=(' + round4(pivotX) + ',' + round4(pivotY) + ')\n');
+		if(left!==null) html.push('Left=' + round2(left) + ' ');
+		if(posX!==null) html.push('PosX=' + round2(posX) + ' ');
+		if(top!==null) html.push('Top=' + round2(top) + '\n');
+		if(posY!==null) html.push('PosY=' + round2(posY) + '\n');
 	  
-		if(right!==null) html.push('Right=' + round(right) + ' ');
-		if(width!==null) html.push('Width=' + round(width) + ' ');
-		if(bottom!==null) html.push('Bottom=' + round(bottom) + '\n');
-		if(height!==null) html.push('Height=' + round(height) + '\n');
+		if(right!==null) html.push('Right=' + round2(right) + ' ');
+		if(width!==null) html.push('Width=' + round2(width) + ' ');
+		if(bottom!==null) html.push('Bottom=' + round2(bottom) + '\n');
+		if(height!==null) html.push('Height=' + round2(height) + '\n');
 	  
 	  
 		html.push('</textarea>');
