@@ -3207,13 +3207,192 @@ SM.extend({
 			//layerData["parent_name"]=layer.parentGroup().name()+"";
 			//layerData["pparent_name"]=layer.parentGroup().parentGroup().name()+"";
 
+		
+
+//Unity info begin
+      //两边拉伸    常见拉伸                文字栏
+      //两边固定	错误    
+      //一边拉伸	不支持 
+      //一边固定	贴边                    金币栏  
+      //没边拉伸	等百分比位置+拉伸       sketch 默认状态
+      //没边固定    等百分比位置+固定        
+	  
+
+		
+		//params
+		var LState=((layer.resizingConstraint()^0x3F )&0x4)!=0;
+		var RState=((layer.resizingConstraint()^0x3F )&0x1)!=0;
+		var TState=((layer.resizingConstraint()^0x3F )&0x20)!=0;
+		var BState=((layer.resizingConstraint()^0x3F )&0x8)!=0;
+		var HStretch=((layer.resizingConstraint()^0x3F )&0x2)==0;
+		var VStretch=((layer.resizingConstraint()^0x3F )&0x10)==0;
+		var rect={...layerData["rect"]};//clone 
+		
+
+		var parentRect={...layerData["parent_rect"]};//clone 
+		
+		//output
+		var layoutTypeH="";
+		var layoutTypeV="";
+		
+		var minAnchorsX=0;
+		var minAnchorsY=0;
+		var maxAnchorsX=0;
+		var maxAnchorsY=0;
+		
+		var posX=null;
+		var posY=null;
+		var width=null;
+		var height=null;
+		
+		var left=null;
+		var right=null;
+		var top=null;
+		var bottom=null;
+		
+		var pivotX=0.5;
+		var pivotY=0.5;
+		
+		//code
+		var relatedRect={...rect};//clone  //相对父的矩形
+		relatedRect.x-=parentRect.x;
+		relatedRect.y-=parentRect.y;
+		
+		
+		//横向
+		if(LState&RState&HStretch){//两边拉伸
+			layoutTypeH="两边拉伸";
+			minAnchorsX=0; 
+			maxAnchorsX=1;
+			left=relatedRect.x;
+			right=parentRect.width-relatedRect.x-relatedRect.width;
+		}
+		else if(LState&RState&!HStretch){//两边固定 错误
+			layoutTypeH="两边固定(错误)";
+			
+		}
+		else if(LState&!RState&HStretch){//一边拉伸
+			layoutTypeH="左边拉伸(不支持)";
+		
+		}
+		else if(LState&!RState&!HStretch){//一边固定
+			layoutTypeH="左边固定";
+			minAnchorsX=0; 
+			maxAnchorsX=0;
+			posX=relatedRect.x+relatedRect.width/2;
+			width=relatedRect.width;
+		}
+		else if(!LState&RState&HStretch){//一边拉伸
+			layoutTypeH="右边拉伸(不支持)";
+			width=relatedRect.width;
+		
+		}
+		else if(!LState&RState&!HStretch){//一边固定
+			layoutTypeH="右边固定";
+			minAnchorsX=1;
+			maxAnchorsX=1;
+			posX=relatedRect.x+relatedRect.width/2-parentRect.width;
+			width=relatedRect.width;
+		
+		}
+		else if(!LState&!RState&HStretch){//没边拉伸
+			layoutTypeH="没边拉伸";
+			minAnchorsX=relatedRect.x/parentRect.width;
+			maxAnchorsX=(relatedRect.x+relatedRect.width)/parentRect.width;
+			left=0;
+			right=0;
+		}
+		else //if(!LState&!RState&!HStretch)//没边固定
+		{
+			layoutTypeH="没边固定";
+			minAnchorsX=(relatedRect.x+relatedRect.width/2)/parentRect.width;
+			maxAnchorsX=(relatedRect.x+relatedRect.width/2)/parentRect.width;
+			posX=0;
+			width=relatedRect.width;
+		
+		}
+		
+		
+		//纵向
+		if(TState&BState&VStretch){//两边拉伸
+			layoutTypeV="两边拉伸";
+			minAnchorsY=0; 
+			maxAnchorsY=1;
+			top=relatedRect.y;
+			bottom=parentRect.height-relatedRect.y-relatedRect.height;
+		}
+		else if(TState&BState&!VStretch){//两边固定 错误
+			layoutTypeV="两边固定(错误)";
+			
+		}
+		else if(TState&!BState&VStretch){//一边拉伸
+			layoutTypeV="上边拉伸(不支持)";
+		
+		}
+		else if(TState&!BState&!VStretch){//一边固定
+			layoutTypeV="上边固定";
+			minAnchorsY=1; 
+			maxAnchorsY=1;
+			posY=-(relatedRect.y+relatedRect.height/2);
+			height=relatedRect.height;
+		}
+		else if(!TState&BState&VStretch){//一边拉伸
+			layoutTypeV="下边拉伸(不支持)";
+		
+		}
+		else if(!TState&BState&!VStretch){//一边固定
+			layoutTypeV="下边固定";
+			minAnchorsY=0;
+			maxAnchorsY=0;
+			posY=parentRect.height-relatedRect.y-relatedRect.height/2;
+			height=relatedRect.height;
+		
+		}
+		else if(!TState&!BState&VStretch){//没边拉伸
+			layoutTypeV="没边拉伸";
+			minAnchorsY=1-(relatedRect.y+relatedRect.height)/parentRect.height;
+			maxAnchorsY=1-relatedRect.y/parentRect.height;
+			top=0;
+			bottom=0;
+		}
+		else //if(!TState&!BState&!VStretch)//没边固定
+		{
+			layoutTypeV="没边固定";
+			minAnchorsY=1-(relatedRect.y+relatedRect.height/2)/parentRect.height;
+			maxAnchorsY=1-(relatedRect.y+relatedRect.height/2)/parentRect.height;
+			posY=0;
+			height=relatedRect.height;
+		
+		}
+		
+		
+		var unity_layout={};
+		
+		unity_layout["minAnchorsX"]=[minAnchorsX,minAnchorsY];
+		unity_layout["maxAnchorsY"]=[maxAnchorsX,maxAnchorsY];
+		unity_layout["posX"]=posX;
+		unity_layout["posY"]=posY;
+		unity_layout["width"]=width;
+		unity_layout["height"]=height;
+		unity_layout["left"]=left;
+		unity_layout["right"]=right;
+		unity_layout["top"]=top;
+		unity_layout["bottom"]=bottom;
+		
+		
+		layerData["unity_layout"]=unity_layout;
+		
+		
+		
+	  		
+//Unity info begin
+			
 		//histudio end
 					
 
         if(symbolLayer) layerData.objectID = this.toJSString( symbolLayer.objectID() );
 
-		//parentsconsole.log(layerData);
-        if ( layerType != "slice" ) {
+		if ( layerType != "slice" ) {
             var layerStyle = layer.style();
             layerData.rotation = layer.rotation();
             layerData.radius = this.getRadius(layer);
