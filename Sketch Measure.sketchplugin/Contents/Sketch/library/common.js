@@ -2578,6 +2578,9 @@ SM.extend({
         var objectID = ( layerData.type == "symbol" )? this.toJSString(layer.symbolMaster().objectID()):
                         ( symbolLayer )? this.toJSString(symbolLayer.objectID()):
                         layerData.objectID;
+								
+						
+						
         if(
             (
                 layerData.type == "slice" ||
@@ -2611,29 +2614,29 @@ SM.extend({
         }
     },
     getSymbol: function(artboard, layer, layerData, data){
+					
+		//console.log("getSymbol:  "+layer.name()+ "  "+layer.className());		
         if( layerData.type == "symbol" ){
+		//console.log("getSymbol=symbol:  "+layer.name()+ "  "+layer.className());	
             var self = this,
                 symbolObjectID = this.toJSString(layer.symbolMaster().objectID());
 
             layerData.objectID = symbolObjectID;
 
+		//console.log("getSymbol=self.hasExportSizes(layer.symbolMaster():  "+self.hasExportSizes(layer.symbolMaster()));
+		////console.log("getSymbol=layer.symbolMaster().children().count() :  "+layer.symbolMaster().children().count() );
             if( !self.hasExportSizes(layer.symbolMaster()) && layer.symbolMaster().children().count() > 1 ){
 				
-				//histudio begin
-				//	var symbolMaster=layer.symbolMaster();
-					
 				
-				//	var bgrect=MSShapeGroup.shapeWithRect(NSMakeRect(0, 0, 100, 100));
-					
-				//	symbolMaster.addLayers([bgrect]);
-				//	bgrect.setResizingConstraint(0x12);
-					
 				
-				//histudio end
+				var symbol_bg=MSRectangleShape.new();
+				symbol_bg.frame = MSRect.rectWithRect(NSMakeRect(0,0,layer.symbolMaster().frame().width(),layer.symbolMaster().frame().height()));
+				layer.symbolMaster().addLayers([symbol_bg]);
+				symbol_bg.setName("_hibg");
+				symbol_bg.setResizingConstraint(0x12);
 				
-				//histudio begin
-					return ;
-				//histudio end
+				
+				
 				
                 var symbolRect = this.getRect(layer),
                     symbolChildren = layer.symbolMaster().children(),
@@ -2648,8 +2651,13 @@ SM.extend({
                     idx = 0;
 
                 overrides = (overrides)? overrides.objectForKey(0): undefined;
-
                 while(tempSymbolLayer = tempSymbolLayers.nextObject()){
+					
+					
+					
+		//console.log("symbolchildren:  "+tempSymbolLayer.name()+ "  "+tempSymbolLayer.className());			
+			
+					
                     if( self.is(tempSymbolLayer, MSSymbolInstance) ){
                         var symbolMasterObjectID = self.toJSString(symbolChildren[idx].objectID());
                         if(
@@ -2657,8 +2665,10 @@ SM.extend({
                           overrides[symbolMasterObjectID] &&
                           !!overrides[symbolMasterObjectID].symbolID
                         ){
+		//console.log("overrides:  ");
                           var changeSymbol = self.find({key: "(symbolID != NULL) && (symbolID == %@)", match: self.toJSString(overrides[symbolMasterObjectID].symbolID)}, self.document.documentData().allSymbols());
                           if(changeSymbol){
+		//console.log("changeSymbol:  ");
                             tempSymbolLayer.changeInstanceToSymbol(changeSymbol);
                           }
                           else{
@@ -2666,8 +2676,9 @@ SM.extend({
                           }
                         }
                     }
-					
                     if(tempSymbolLayer){
+					if( tempSymbolLayer.name()!="_hibg")
+						//console.log("dogetlayer:  "+tempSymbolLayer.name()+ "  "+tempSymbolLayer.className());		
                       self.getLayer(
                           artboard,
                           tempSymbolLayer,
@@ -2675,9 +2686,14 @@ SM.extend({
                           symbolChildren[idx]
                       );
                     }
+					else{
+		//console.log("bg:  "+tempSymbolLayer.name()+ "  "+tempSymbolLayer.className());	
+					
+					}
                     idx++
                 }
                 this.removeLayer(tempGroup);
+                this.removeLayer(symbol_bg);
             }
         }
     },
@@ -3130,6 +3146,11 @@ SM.extend({
             group = layer.parentGroup(),
             layerStates = this.getStates(layer);
 
+			
+
+		//console.log("processing:  "+layer.name()+ "  "+layer.className());			
+			
+			
         if(layer && this.is(layer, MSLayerGroup) && /NOTE\#/.exec(layer.name())){
             var textLayer = layer.children()[2];
 
@@ -3149,6 +3170,14 @@ SM.extend({
             layerStates.isMeasure ||
             layerStates.isShapeGroup
         ){
+			//console.log("processing: !isExportable="+(!this.isExportable(layer)));
+			//console.log("processing: !layerStates="+(!layerStates.isVisible ));
+			//console.log("processing: isLocked="+(layerStates.isLocked ));
+			//console.log("processing: !MSSliceLayer="+( !this.is(layer, MSSliceLayer)  ));
+			//console.log("processing: isEmpty="+(layerStates.isEmpty ));
+			//console.log("processing: hasSlice="+(layerStates.hasSlice ));
+			//console.log("processing: isMeasure="+(layerStates.isMeasure ));
+			//console.log("processing: isShapeGroup="+(layerStates.isShapeGroup ));
             return this;
         }
 
@@ -3180,6 +3209,7 @@ SM.extend({
         }
 		
 		
+		
 
         var layerData = {
                     objectID: this.toJSString( layer.objectID() ),
@@ -3190,13 +3220,19 @@ SM.extend({
 				
 		//histudio begin		
 		
+		
+		var error=false;
+		var error_msg="";
+		
+            layerData["real_id"]  =       this.toJSString( layer.objectID() );
+		
           //  layerData["r_rect"]       = this.rectToJSON(layer.absoluteRect(),layer.parentGroup().frame());
             //layerData["r_rect2"]       = this.rectToJSON(layer.frame());
 			layerData["classname"]=layer.className().toString()+"";
 			layerData["parent_name"]=this.toJSString( layer.parentGroup().name().toString());
 			layerData["parent_classname"]=this.toJSString( layer.parentGroup().className().toString());
-			layerData["symbol_name"]="MSSymbolInstance"==layer.className().toString()?this.toJSString(layer.symbolMaster().name()):"";
-			layerData["symbol_page_name"]="MSSymbolInstance"==layer.className().toString()?this.toJSString(layer.symbolMaster().parentPage().name()):"";
+			layerData["symbol_name"]="MSSymbolInstance"==layer.className().toString()&&layer.symbolMaster()?this.toJSString(layer.symbolMaster().name()):"";
+			layerData["symbol_page_name"]="MSSymbolInstance"==layer.className().toString()&&layer.symbolMaster()?this.toJSString(layer.symbolMaster().parentPage().name()):"";
 			layerData["resizingConstraint"]=layer.resizingConstraint();
 		   // frame: this.rectToJSON(layer.frame()),
 			layerData["parent_id"]=this.toJSString( group.objectID());
@@ -3253,6 +3289,7 @@ SM.extend({
 		var pivotX=0.5;
 		var pivotY=0.5;
 		
+		
 		//code
 		var relatedRect={...rect};//clone  //相对父的矩形
 		relatedRect.x-=parentRect.x;
@@ -3269,10 +3306,14 @@ SM.extend({
 		}
 		else if(LState&RState&!HStretch){//两边固定 错误
 			layoutTypeH="两边固定(错误)";
+			error=true;
+			error_msg+=layoutTypeH;
 			
 		}
 		else if(LState&!RState&HStretch){//一边拉伸
 			layoutTypeH="左边拉伸(不支持)";
+			error=true;
+			error_msg+=layoutTypeH;
 		
 		}
 		else if(LState&!RState&!HStretch){//一边固定
@@ -3284,7 +3325,8 @@ SM.extend({
 		}
 		else if(!LState&RState&HStretch){//一边拉伸
 			layoutTypeH="右边拉伸(不支持)";
-			width=relatedRect.width;
+			error=true;
+			error_msg+=layoutTypeH;
 		
 		}
 		else if(!LState&RState&!HStretch){//一边固定
@@ -3323,10 +3365,14 @@ SM.extend({
 		}
 		else if(TState&BState&!VStretch){//两边固定 错误
 			layoutTypeV="两边固定(错误)";
+			error=true;
+			error_msg+=layoutTypeV;
 			
 		}
 		else if(TState&!BState&VStretch){//一边拉伸
 			layoutTypeV="上边拉伸(不支持)";
+			error=true;
+			error_msg+=layoutTypeV;
 		
 		}
 		else if(TState&!BState&!VStretch){//一边固定
@@ -3338,6 +3384,8 @@ SM.extend({
 		}
 		else if(!TState&BState&VStretch){//一边拉伸
 			layoutTypeV="下边拉伸(不支持)";
+			error=true;
+			error_msg+=layoutTypeV;
 		
 		}
 		else if(!TState&BState&!VStretch){//一边固定
@@ -3368,8 +3416,9 @@ SM.extend({
 		
 		var unity_layout={};
 		
-		unity_layout["minAnchorsX"]=[minAnchorsX,minAnchorsY];
-		unity_layout["maxAnchorsY"]=[maxAnchorsX,maxAnchorsY];
+		unity_layout["minAnchors"]=[minAnchorsX,minAnchorsY];
+		unity_layout["maxAnchors"]=[maxAnchorsX,maxAnchorsY];
+		unity_layout["pivot"]=[pivotX,pivotY];
 		unity_layout["posX"]=posX;
 		unity_layout["posY"]=posY;
 		unity_layout["width"]=width;
@@ -3381,16 +3430,22 @@ SM.extend({
 		
 		
 		layerData["unity_layout"]=unity_layout;
-		
-		
-		
 	  		
-//Unity info begin
-			
+//Unity info end
+		
+		if( layerData.type == "symbol" ){
+            if( !this.hasExportSizes(layer.symbolMaster()) && layer.symbolMaster().children().count() > 1 ){
+				
+				layerData["overrides"]= layer.overrides();
+			}
+		}
+		
+		if(layerType=="shape")
+		console.warn("警告:  "+layerData["name"]+ " 或其父级别需要制作导出项！")
+		
 		//histudio end
 					
-
-        if(symbolLayer) layerData.objectID = this.toJSString( symbolLayer.objectID() );
+	 if(symbolLayer) layerData.objectID = this.toJSString( symbolLayer.objectID() );
 
 		if ( layerType != "slice" ) {
             var layerStyle = layer.style();
@@ -3429,6 +3484,10 @@ SM.extend({
 
         this.getMask(group, layer, layerData, layerStates);
         this.getSlice(layer, layerData, symbolLayer);
+		//histudio begin
+		layerData["error"]=error;
+		layerData["error_msg"]=error_msg;	
+		//histudio end
         data.layers.push(layerData);
         this.getSymbol(artboard, layer, layerData, data);
         this.getText(artboard, layer, layerData, data);
