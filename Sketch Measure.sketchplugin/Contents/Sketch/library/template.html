@@ -622,7 +622,8 @@ var I18N = {},
             }
             return this;
         },
-        colors: function(colors){
+    colors: function(colors){
+		/*
             if(!this.project.colors){
                 return false;
             }
@@ -646,6 +647,80 @@ var I18N = {},
                 $('#colors').html(colorListHTML.join(''));
             }
             return this;
+			*/
+			var self = this,
+            layersHTML = [];
+			var treelevels=[];
+            layersHTML.push('<ul style="list-style: none;padding-left: 5px;">');
+			
+			
+            $.each(this.current.layers, function(index, layer) {
+                var x = self.zoomSize( layer.rect.x ),
+                    y = self.zoomSize( layer.rect.y ),
+                    width = self.zoomSize( layer.rect.width ),
+                    height = self.zoomSize( layer.rect.height ),
+                    classNames = ['index'];
+
+				if(treelevels.length==0)
+				{
+					treelevels.push(layer.parent_id);
+				}				
+				var level=treelevels.indexOf(layer.parent_id);
+				
+				if(level==-1)
+				{
+					treelevels.push(layer.parent_id);
+            layersHTML.push('<ul style="list-style: none; padding-left: 10px;">');
+					
+				}
+				else
+				{
+					for(var i=0;i<(treelevels.length-level-1);i++)
+					{
+						layersHTML.push("</ul>");
+					}
+					treelevels=treelevels.slice(0,level+1);
+				}
+				
+				
+					
+					
+					
+						
+					
+                classNames.push('index-' + layer.real_id);
+                if(self.selectedIndex == index) classNames.push('selected');
+                layersHTML.push([
+                    '<li  class="level_layer" data-index="' + index + '" id="level-' + layer.objectID + '" class="level-layer" data-objectId="' + layer.objectID + '">',
+						"[",
+						layer.type.substr(0,1).toUpperCase(),
+						"]",
+						layer.name,
+                    '</li>'
+                ].join(''));
+            });
+            layersHTML.push('</ul>');
+            $('#colors').html(layersHTML.join(''));
+			$(".level_layer").click(function(event){
+			
+						var selected = (!$(event.target).hasClass('slice-layer')&&!$(event.target).hasClass('level-layer'))? event.target: $('.layer-' + $(event.target).attr('data-objectid')).first();
+					
+						self.selectedIndex = self.getIndex(selected);
+						self.hideDistance();
+						self.mouseoutLayer();
+						self.selectedLayer();
+						self.inspector();
+			});
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
         },
         notes: function(){
             var self = this,
@@ -945,8 +1020,15 @@ var I18N = {},
                             '<div class="item">',
                                 '<label data-label="' + _('Content') + '"><textarea id="content" rows="2" readonly="readonly" style="font-family: ' + layerData.fontFace + ', sans-serif">' + layerData.content + '</textarea></label>',
                             '</div>'
+                        ].join(''),
+                    textstyle = [
+                            '<div class="item" data-label="' +_('TextStyle') + ':">',
+                                '<label><input id="TextStyle" type="text" value="' + layerData.textStyleName + '" readonly="readonly"></label>',
+                            '</div>'
                         ].join('');
-                html.push(this.propertyType('TYPEFACE', [ fontFamily, textColor, fontSize, spacing, content ].join('')));
+                html.push(this.propertyType('TYPEFACE', [ textstyle,fontFamily, textColor, fontSize, spacing, content ].join('')));
+
+				
             }
             // BORDERS
             if(layerData.borders && layerData.borders.length > 0){
@@ -1080,7 +1162,7 @@ var I18N = {},
                             '</div>'
                     );
                 }
-                html.push(this.propertyType('CODE TEMPLATE', [ tab, css, android.join(''), ios.join('') ].join(''), true));
+             //   html.push(this.propertyType('CODE TEMPLATE', [ tab, css, android.join(''), ios.join('') ].join(''), true));
             }
             //  EXPORTABLE
             if(layerData.exportable && layerData.exportable.length > 0){
@@ -1131,6 +1213,11 @@ var I18N = {},
 							((layerData.resizingConstraint^0x3F )&0x20?'T':'_')+
 							((layerData.resizingConstraint^0x3F )&0x10?'V':'_')+
 							'\n');
+							
+							
+							
+							
+							
 			html.push('</textarea>');
 			
 			
@@ -1321,7 +1408,6 @@ var I18N = {},
 		html.push('uinty layout\n');
 		html.push('横向 '+ layoutTypeH+'\n');
 		html.push('纵向 '+ layoutTypeV+'\n');
-	  
 		html.push('minAnchors=(' + round4(minAnchorsX) + ',' + round4(minAnchorsY) + ')\n');
 		html.push('maxAnchors=(' + round4(maxAnchorsX) + ',' + round4(maxAnchorsY) + ')\n');
 		html.push('pivot=(' + round4(pivotX) + ',' + round4(pivotY) + ')\n');
@@ -1336,10 +1422,14 @@ var I18N = {},
 		if(height!==null) html.push('Height=' + round2(height) + '\n');
 	  
 	  
+	  
+	  
+	  
+	  
+	  
 		html.push('</textarea>');
 		
 	
-		
 		
 		//Unity info end
 	  
@@ -1347,6 +1437,10 @@ var I18N = {},
 	  
 	  
 	  
+		html.push('<textarea id="css" rows ="20" readonly="readonly">');
+		html.push( JSON.stringify(layerData));
+		html.push('</textarea>');
+		
 	  
 	  
 	  

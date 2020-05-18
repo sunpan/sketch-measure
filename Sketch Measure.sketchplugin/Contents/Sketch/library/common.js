@@ -2368,6 +2368,13 @@ SM.extend({
 
 // export.js
 SM.extend({
+	absoluteRectFixedMap:{},
+	getFixedAbsoluteRect: function(layer){
+		return 	this.absoluteRectFixedMap[layer.objectID()]?this.absoluteRectFixedMap[layer.objectID()]:layer.absoluteRect();
+	},
+	
+	
+
     hasExportSizes: function(layer){
         return layer.exportOptions().exportFormats().count() > 0;
     },
@@ -2583,7 +2590,7 @@ SM.extend({
 						
         if(
             (
-                layerData.type == "slice" ||
+                layerData.type == "slice" ||// layerData.type == "text" ||
                 (
                     layerData.type == "symbol" &&
                     this.hasExportSizes(layer.symbolMaster())
@@ -2613,6 +2620,30 @@ SM.extend({
             layerData.exportable = this.sliceCache[objectID];
         }
     },
+	//histudio begin
+	/*
+	getTextStyleNamebyStyleID:function (textStyle_id) {
+		if(this.styleNames==null)
+		{
+			var styleNames={};
+			var styles = this.document.documentData().layerTextStyles().sharedStyles() ;	
+				  styles.forEach(element => {
+				   styleNames[this.toJSString(element.objectID())] =this.toJSString( element.name());
+					console.log("styleNames["+this.toJSString(element.objectID())+"]="+this.toJSString( element.name()));	
+				});
+			this.styleNames=styleNames;
+		}
+		return this.styleNames[textStyle_id]!=null?this.styleNames[textStyle_id]:"";
+	},
+
+	*/
+	
+	//histudio end
+	
+	
+	
+	
+	
     getSymbol: function(artboard, layer, layerData, data){
 					
 		//console.log("getSymbol:  "+layer.name()+ "  "+layer.className());		
@@ -2625,6 +2656,11 @@ SM.extend({
 
 		//console.log("getSymbol=self.hasExportSizes(layer.symbolMaster():  "+self.hasExportSizes(layer.symbolMaster()));
 		////console.log("getSymbol=layer.symbolMaster().children().count() :  "+layer.symbolMaster().children().count() );
+		
+	
+            var parent_id = layer.parentGroup().objectID();
+		
+		
             if( !self.hasExportSizes(layer.symbolMaster()) && layer.symbolMaster().children().count() > 1 ){
 				
 				
@@ -2649,15 +2685,13 @@ SM.extend({
                 var tempSymbolLayers = tempGroup.children().objectEnumerator(),
                     overrides = layer.overrides(),
                     idx = 0;
-
+						
+					
+					
+				var layerdataarray=[];	
+		
                 overrides = (overrides)? overrides.objectForKey(0): undefined;
                 while(tempSymbolLayer = tempSymbolLayers.nextObject()){
-					
-					
-					
-		//console.log("symbolchildren:  "+tempSymbolLayer.name()+ "  "+tempSymbolLayer.className());			
-			
-					
                     if( self.is(tempSymbolLayer, MSSymbolInstance) ){
                         var symbolMasterObjectID = self.toJSString(symbolChildren[idx].objectID());
                         if(
@@ -2665,10 +2699,8 @@ SM.extend({
                           overrides[symbolMasterObjectID] &&
                           !!overrides[symbolMasterObjectID].symbolID
                         ){
-		//console.log("overrides:  ");
                           var changeSymbol = self.find({key: "(symbolID != NULL) && (symbolID == %@)", match: self.toJSString(overrides[symbolMasterObjectID].symbolID)}, self.document.documentData().allSymbols());
                           if(changeSymbol){
-		//console.log("changeSymbol:  ");
                             tempSymbolLayer.changeInstanceToSymbol(changeSymbol);
                           }
                           else{
@@ -2677,20 +2709,49 @@ SM.extend({
                         }
                     }
                     if(tempSymbolLayer){
-					if( tempSymbolLayer.name()!="_hibg")
-						//console.log("dogetlayer:  "+tempSymbolLayer.name()+ "  "+tempSymbolLayer.className());		
+						
+						var thedata={};
+						thedata["tempSymbolLayer"]=tempSymbolLayer;
+						thedata["symbolChild"]=symbolChildren[idx];
+						layerdataarray.push(thedata);
+                    }
+                    idx++
+                }
+				
+				
+				for(var iiii=0;iiii<layerdataarray.length;iiii++)
+				{
+					var tempSymbolLayer = layerdataarray[iiii].tempSymbolLayer;
+					if(tempGroup.objectID() == tempSymbolLayer.parentGroup().objectID())
+					{
+						if( tempSymbolLayer.name()=="_hibg")
+						{
+							var absoluteRect=tempSymbolLayer.absoluteRect();
+							self.absoluteRectFixedMap[tempGroup.objectID()]={
+							x: function(){return absoluteRect.x();},
+							y: function(){return absoluteRect.y();},
+							width: function(){return absoluteRect.width();},
+							height: function(){return absoluteRect.height();}
+							};
+						//		console.log("absoluteRectFixedMap:  "+tempGroup.name()+ "  "+tempGroup.objectID()+"width="+self.absoluteRectFixedMap[tempGroup.objectID()].width()
+						//		+"height="+self.absoluteRectFixedMap[tempGroup.objectID()].height());
+							break;
+						}
+					}
+				}
+				
+				for(var iiii=0;iiii<layerdataarray.length;iiii++)
+				{
+					var tempSymbolLayer = layerdataarray[iiii].tempSymbolLayer;
+					var symbolChild=layerdataarray[iiii].symbolChild;
+					if( tempSymbolLayer.name()!="_hibg")	
                       self.getLayer(
                           artboard,
                           tempSymbolLayer,
                           data,
-                          symbolChildren[idx]
+                          symbolChild
                       );
-                    }
-					else{
-		//console.log("bg:  "+tempSymbolLayer.name()+ "  "+tempSymbolLayer.className());	
-					
-					}
-                    idx++
+
                 }
                 this.removeLayer(tempGroup);
                 this.removeLayer(symbol_bg);
@@ -3146,9 +3207,7 @@ SM.extend({
             group = layer.parentGroup(),
             layerStates = this.getStates(layer);
 
-			
-
-		//console.log("processing:  "+layer.name()+ "  "+layer.className());			
+	//	console.log("processing:  "+layer.name()+ "  "+layer.className());			
 			
 			
         if(layer && this.is(layer, MSLayerGroup) && /NOTE\#/.exec(layer.name())){
@@ -3205,7 +3264,10 @@ SM.extend({
         }
         else{
             // export the default rect.
-            exportLayerRect = layer.absoluteRect();
+			//HiSutido begin
+           // exportLayerRect = layer.absoluteRect();
+			exportLayerRect = this.getFixedAbsoluteRect(layer);
+			//HiStudio end
         }
 		
 		
@@ -3231,12 +3293,15 @@ SM.extend({
 			layerData["classname"]=layer.className().toString()+"";
 			layerData["parent_name"]=this.toJSString( layer.parentGroup().name().toString());
 			layerData["parent_classname"]=this.toJSString( layer.parentGroup().className().toString());
+			
+			
 			layerData["symbol_name"]="MSSymbolInstance"==layer.className().toString()&&layer.symbolMaster()?this.toJSString(layer.symbolMaster().name()):"";
+			layerData["symbol_rect"]="MSSymbolInstance"==layer.className().toString()&&layer.symbolMaster()?this.rectToJSON(layer.symbolMaster().frame()):"{x:0;y:0;width:0;height:0}";
 			layerData["symbol_page_name"]="MSSymbolInstance"==layer.className().toString()&&layer.symbolMaster()?this.toJSString(layer.symbolMaster().parentPage().name()):"";
 			layerData["resizingConstraint"]=layer.resizingConstraint();
 		   // frame: this.rectToJSON(layer.frame()),
 			layerData["parent_id"]=this.toJSString( group.objectID());
-			layerData["parent_rect"]=this.rectToJSON(layer.parentGroup().absoluteRect(), artboardRect);
+			layerData["parent_rect"]=this.rectToJSON(this.getFixedAbsoluteRect(layer.parentGroup()), artboardRect);
 			layerData["artboard_rect"]=this.rectToJSON(artboardRect, artboardRect);
 		//	layerData["parent_rect2"]=this.rectToJSON(layer.parentGroup().absoluteRect());
 		//	layerData["first_level"]=this.rectToJSON(layer.parentGroup().frame());
@@ -3466,6 +3531,7 @@ SM.extend({
             layerData.textAlign = TextAligns[layer.textAlignment()];
             layerData.letterSpacing = this.toJSNumber(layer.characterSpacing()) || 0;
             layerData.lineHeight = layer.lineHeight() || layer.font().defaultLineHeightForFont();
+			layerData.textStyleName=layer.sharedStyle()!=null?this.toJSString(layer.sharedStyle().name()):"";
         }
 
         var layerCSSAttributes = layer.CSSAttributes(),
